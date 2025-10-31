@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Loader2, MapPin, Camera, Mic, LogOut, Calendar, CheckCircle2 } from "lucide-react";
 import AttendanceCamera from "@/components/AttendanceCamera";
 import AttendanceRecords from "@/components/AttendanceRecords";
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -15,16 +14,13 @@ const Dashboard = () => {
   const [locationValid, setLocationValid] = useState(false);
   const [currentStep, setCurrentStep] = useState<"location" | "camera" | "voice" | "complete">("location");
   const [showCamera, setShowCamera] = useState(false);
-
   // College coordinates (example: set your college location)
-  const COLLEGE_LAT = 28.6139; // Example: Delhi
+  const COLLEGE_LAT = 17.331229; // Example: Delhi
   const COLLEGE_LON = 77.2090;
   const ALLOWED_RADIUS_METERS = 100;
-
   useEffect(() => {
     checkUser();
   }, []);
-
   const checkUser = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -32,39 +28,32 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
-
     // Fetch student data
     const { data: student, error } = await supabase
       .from('students')
       .select('*')
       .eq('user_id', session.user.id)
       .single();
-
     if (error || !student) {
       toast.error("Failed to load student data");
       navigate("/auth");
       return;
     }
-
     setStudentData(student);
     setLoading(false);
   };
-
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371e3; // Earth radius in meters
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δφ = (lat2 - lat1) * Math.PI / 180;
     const Δλ = (lon2 - lon1) * Math.PI / 180;
-
     const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
               Math.cos(φ1) * Math.cos(φ2) *
               Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
     return R * c;
   };
-
   const checkLocation = async () => {
     setLoading(true);
     
@@ -73,7 +62,6 @@ const Dashboard = () => {
       setLoading(false);
       return;
     }
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const distance = calculateDistance(
@@ -82,7 +70,6 @@ const Dashboard = () => {
           COLLEGE_LAT,
           COLLEGE_LON
         );
-
         if (distance <= ALLOWED_RADIUS_METERS) {
           setLocationValid(true);
           setCurrentStep("camera");
@@ -99,18 +86,15 @@ const Dashboard = () => {
       }
     );
   };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/auth");
   };
-
   const handleAttendanceMarked = () => {
     setCurrentStep("complete");
     setShowCamera(false);
     toast.success("Attendance marked successfully!");
   };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -118,7 +102,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -139,7 +122,6 @@ const Dashboard = () => {
             </div>
           </CardHeader>
         </Card>
-
         {/* Attendance Process */}
         {!showCamera && currentStep !== "complete" && (
           <Card className="border-2">
@@ -183,7 +165,6 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
-
               {/* Step 2: Face Recognition */}
               <div className={`flex items-start gap-4 p-4 rounded-lg ${locationValid ? 'bg-muted/50' : 'bg-muted/20 opacity-50'}`}>
                 <div className="p-3 rounded-full bg-primary">
@@ -196,7 +177,6 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-
               {/* Step 3: Voice Verification */}
               <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/20 opacity-50">
                 <div className="p-3 rounded-full bg-primary">
@@ -212,7 +192,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         )}
-
         {/* Camera Interface */}
         {showCamera && (
           <AttendanceCamera 
@@ -220,7 +199,6 @@ const Dashboard = () => {
             onAttendanceMarked={handleAttendanceMarked}
           />
         )}
-
         {/* Success Message */}
         {currentStep === "complete" && (
           <Card className="border-2 border-success">
@@ -242,12 +220,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         )}
-
         {/* Attendance Records */}
         <AttendanceRecords studentId={studentData?.id} />
       </div>
     </div>
   );
 };
-
 export default Dashboard;
