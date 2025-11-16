@@ -1,8 +1,8 @@
-# Welcome to your Lovable project
+# Welcome to your Smart Attsndance project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/3a8007ca-0ab7-4ab4-95c6-0f1ba4e498e4
+
 
 ## How can I edit this code?
 
@@ -10,7 +10,7 @@ There are several ways of editing your application.
 
 **Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3a8007ca-0ab7-4ab4-95c6-0f1ba4e498e4) and start prompting.
+Simply visit the [Lovable Project](c) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
